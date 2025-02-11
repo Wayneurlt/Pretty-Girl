@@ -4,121 +4,95 @@
       <img 
         src="/assets/images/val.png" 
         alt="Valentine's Day Illustration" 
-        class="mx-auto mb-6 w-32 h-32 object-cover" 
+        class="mx-auto mb-6 w-32 h-32 object-cover"
       />
 
-      <h1 class="text-4xl text-indigo-600 mb-6 animate-fade-in">
+      <h1 class="text-4xl text-indigo-600 mb-6">
         Will you be my Valentine?
       </h1>
       
-      <div class="flex justify-center gap-4 mt-6">
+      <!-- Buttons Container -->
+      <div v-if="!formVisible" class="flex justify-center gap-4 mt-6 relative">
         <button
-          v-if="!showForm"
-          @click="showForm = true"
+          @click="handleYesClick"
           class="px-6 py-3 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition duration-300 transform hover:scale-105"
-          aria-label="Accept Valentine's request"
         >
           YES!
         </button>
+        
         <button
-          v-if="!showForm"
           @click="moveNoButton"
           :style="noButtonStyle"
-          class="px-6 py-3 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition duration-300 transform hover:scale-105 absolute"
-          aria-label="Decline Valentine's request"
-          ref="noButton"
+          class="px-6 py-3 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition duration-300 transform hover:scale-105"
+          ref="noButtonRef"
         >
           NO!
         </button>
       </div>
 
-      <Transition name="fade">
-        <div v-if="showForm" class="animate-fade-in">
-          <form @submit.prevent="handleSubmit" class="space-y-4 mt-6">
-            <div class="space-y-2">
-              <input
-                v-model="formData.name"
-                type="text"
-                placeholder="Your Name"
-                required
-                class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
-                :class="{ 'border-red-500': errors.name }"
-                aria-label="Your name"
-                :aria-invalid="!!errors.name"
-                :aria-describedby="errors.name ? 'name-error' : undefined"
-              />
-              <p 
-                v-if="errors.name" 
-                id="name-error"
-                class="text-red-500 text-sm text-left"
-                role="alert"
-              >
-                {{ errors.name }}
-              </p>
-            </div>
+      <!-- Form Section -->
+      <div v-show="formVisible" class="mt-6 transition-all duration-300">
+        <form @submit.prevent="handleSubmit" class="space-y-4">
+          <!-- Name Input -->
+          <div class="space-y-2">
+            <input
+              v-model="formData.name"
+              type="text"
+              placeholder="Your Name"
+              required
+              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
+              :class="{ 'border-red-500': errors.name }"
+            />
+            <p v-if="errors.name" class="text-red-500 text-sm text-left">
+              {{ errors.name }}
+            </p>
+          </div>
 
-            <div class="space-y-2">
-              <input
-                v-model="formData.email"
-                type="email"
-                placeholder="Your Email"
-                required
-                class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
-                :class="{ 'border-red-500': errors.email }"
-                aria-label="Your email"
-                :aria-invalid="!!errors.email"
-                :aria-describedby="errors.email ? 'email-error' : undefined"
-              />
-              <p 
-                v-if="errors.email" 
-                id="email-error"
-                class="text-red-500 text-sm text-left"
-                role="alert"
-              >
-                {{ errors.email }}
-              </p>
-            </div>
+          <!-- Email Input -->
+          <div class="space-y-2">
+            <input
+              v-model="formData.email"
+              type="email"
+              placeholder="Your Email"
+              required
+              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
+              :class="{ 'border-red-500': errors.email }"
+            />
+            <p v-if="errors.email" class="text-red-500 text-sm text-left">
+              {{ errors.email }}
+            </p>
+          </div>
 
-            <div class="flex gap-4 justify-center">
-              <button
-                type="submit"
-                :disabled="isSubmitting"
-                class="px-6 py-3 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Submit Valentine's response"
-              >
-                <span v-if="isSubmitting" class="flex items-center gap-2">
-                  <span class="animate-spin">↻</span>
-                  Submitting...
-                </span>
-                <span v-else>Submit</span>
-              </button>
-              <button
-                type="button"
-                @click="cancelForm"
-                class="px-6 py-3 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition duration-300 transform hover:scale-105"
-                aria-label="Cancel form submission"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </Transition>
+          <!-- Form Buttons -->
+          <div class="flex gap-4 justify-center">
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="px-6 py-3 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition duration-300 transform hover:scale-105 disabled:opacity-50"
+            >
+              <span v-if="isSubmitting">Sending...</span>
+              <span v-else>Submit</span>
+            </button>
+            
+            <button
+              type="button"
+              @click="handleCancel"
+              class="px-6 py-3 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition duration-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
 
-      <!-- Success/Error Toast Messages -->
-      <Transition name="fade">
-        <div 
-          v-if="notification.show" 
-          :class="[
-            'fixed bottom-4 right-4 p-4 rounded-lg shadow-lg',
-            notification.type === 'success' ? 'bg-green-500' : 'bg-red-500',
-            'text-white'
-          ]"
-          role="alert"
-        >
-          {{ notification.message }}
-        </div>
-      </Transition>
+      <!-- Toast Notification -->
+      <div 
+        v-if="notification.show"
+        class="fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white"
+        :class="notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'"
+      >
+        {{ notification.message }}
+      </div>
     </div>
   </div>
 </template>
@@ -139,68 +113,80 @@ interface FormErrors {
   email: string;
 }
 
-interface ButtonStyle {
-  position: 'static' | 'absolute';
-  left?: string;
-  top?: string;
-  transition?: string;
-}
-
 interface Notification {
   show: boolean;
   message: string;
   type: 'success' | 'error';
 }
 
-// Environment variables (should be in .env file)
-const EMAIL_CONFIG = {
-  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-  USER_ID: import.meta.env.VITE_EMAILJS_USER_ID,
-} as const;
-
-// State
+// Router setup
 const router = useRouter();
-const showForm = ref(false);
+
+// Refs and reactive state
+const formVisible = ref(false);
 const isSubmitting = ref(false);
-const noButton = ref<HTMLButtonElement | null>(null);
+const noButtonRef = ref<HTMLButtonElement | null>(null);
 
 const formData = reactive<FormData>({
   name: '',
-  email: '',
+  email: ''
 });
 
 const errors = reactive<FormErrors>({
   name: '',
-  email: '',
-});
-
-const noButtonStyle = ref<ButtonStyle>({
-  position: 'static',
+  email: ''
 });
 
 const notification = reactive<Notification>({
   show: false,
   message: '',
-  type: 'success',
+  type: 'success'
 });
 
-// Initialization
+const noButtonStyle = reactive({
+  position: 'static' as const,
+  left: '0px',
+  top: '0px',
+  transition: 'all 0.3s ease'
+});
+
+// Email configuration
+const EMAIL_CONFIG = {
+  SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+  USER_ID: import.meta.env.VITE_EMAILJS_USER_ID
+};
+
+// Initialize EmailJS
 onMounted(() => {
   if (EMAIL_CONFIG.USER_ID) {
     emailjs.init(EMAIL_CONFIG.USER_ID);
-  } else {
-    console.error('EmailJS configuration is missing');
   }
+  console.log('Component mounted, formVisible:', formVisible.value);
 });
 
-// Email Validation
+// Handle YES button click
+const handleYesClick = () => {
+  console.log('Yes clicked');
+  formVisible.value = true;
+};
+
+// Handle form cancellation
+const handleCancel = () => {
+  formVisible.value = false;
+  formData.name = '';
+  formData.email = '';
+  errors.name = '';
+  errors.email = '';
+};
+
+// Validate email format
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-// Form Validation
+// Validate form
 const validateForm = (): boolean => {
   let isValid = true;
   errors.name = '';
@@ -222,7 +208,7 @@ const validateForm = (): boolean => {
   return isValid;
 };
 
-// Notification Handler
+// Show notification
 const showNotification = (message: string, type: 'success' | 'error') => {
   notification.show = true;
   notification.message = message;
@@ -233,15 +219,15 @@ const showNotification = (message: string, type: 'success' | 'error') => {
   }, 3000);
 };
 
-// Form Submission
+// Handle form submission
 const handleSubmit = async () => {
   if (!validateForm()) return;
 
   isSubmitting.value = true;
 
   try {
-    if (!EMAIL_CONFIG.SERVICE_ID || !EMAIL_CONFIG.TEMPLATE_ID || !EMAIL_CONFIG.USER_ID) {
-      throw new Error('EmailJS configuration is missing');
+    if (!EMAIL_CONFIG.SERVICE_ID || !EMAIL_CONFIG.TEMPLATE_ID) {
+      throw new Error('Email configuration missing');
     }
 
     await emailjs.send(
@@ -250,72 +236,49 @@ const handleSubmit = async () => {
       {
         from_name: formData.name,
         from_email: formData.email,
-        message: 'Someone clicked YES to be your Valentine! ❤️',
+        message: 'Someone said YES to be your Valentine! ❤️'
       }
     );
 
-    // Store response locally
+    // Store response
     localStorage.setItem('valentineResponse', JSON.stringify({
       name: formData.name,
       email: formData.email,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     }));
 
-    showNotification('Thank you for your response! ❤️', 'success');
+    showNotification('Thanks for your response! ❤️', 'success');
     
-    // Navigate after a brief delay to show the success message
+    // Navigate after showing success message
     setTimeout(() => {
       router.push('/page7');
     }, 1500);
   } catch (error) {
-    console.error('Error submitting form:', error);
-    showNotification('Oops! Something went wrong. Please try again.', 'error');
+    console.error('Submission error:', error);
+    showNotification('Something went wrong. Please try again.', 'error');
   } finally {
     isSubmitting.value = false;
   }
 };
 
-// Cancel Form
-const cancelForm = () => {
-  showForm.value = false;
-  formData.name = '';
-  formData.email = '';
-  errors.name = '';
-  errors.email = '';
-};
-
-// Move NO Button
+// Move NO button
 const moveNoButton = () => {
-  if (!noButton.value) return;
-
-  const buttonRect = noButton.value.getBoundingClientRect();
-  const maxX = window.innerWidth - buttonRect.width;
-  const maxY = window.innerHeight - buttonRect.height;
+  const maxX = window.innerWidth - 100;
+  const maxY = window.innerHeight - 100;
   
-  const x = Math.max(0, Math.min(Math.random() * maxX, maxX));
-  const y = Math.max(0, Math.min(Math.random() * maxY, maxY));
+  const randX = Math.floor(Math.random() * maxX);
+  const randY = Math.floor(Math.random() * maxY);
 
-  noButtonStyle.value = {
-    position: 'absolute',
-    left: `${x}px`,
-    top: `${y}px`,
-    transition: 'left 0.3s, top 0.3s',
-  };
+  Object.assign(noButtonStyle, {
+    position: 'fixed',
+    left: `${randX}px`,
+    top: `${randY}px`
+  });
 };
 </script>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-@keyframes fade-in {
+@keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -326,7 +289,13 @@ const moveNoButton = () => {
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 1s ease-out;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
