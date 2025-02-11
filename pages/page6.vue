@@ -32,7 +32,7 @@
               type="text"
               placeholder="Your Name"
               required
-              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
               :class="{ 'border-red-500': errors.name }"
             />
             <p v-if="errors.name" class="text-red-500 text-sm text-left">{{ errors.name }}</p>
@@ -44,7 +44,7 @@
               type="email"
               placeholder="Your Email"
               required
-              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
               :class="{ 'border-red-500': errors.email }"
             />
             <p v-if="errors.email" class="text-red-500 text-sm text-left">{{ errors.email }}</p>
@@ -101,7 +101,7 @@ const noButtonStyle = ref({
 // EmailJS Configuration (Updated IDs)
 const SERVICE_ID = 'service_pxu1wxz';
 const TEMPLATE_ID = 'template_ds9f9fl';
-const USER_ID = '4VE_fO_Bp6M16bG';
+const USER_ID = '_4VE__fO_Bp6M16bG';
 
 // Initialize EmailJS
 onMounted(() => {
