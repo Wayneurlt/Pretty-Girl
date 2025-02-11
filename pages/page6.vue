@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-indigo-100 font-sans">
-    <div class="text-center p-8 bg-white rounded-2xl shadow-lg max-w-md mx-4">
+    <div class="text-center p-8 bg-transparent rounded-2xl max-w-md mx-4">
       <img 
         src="/assets/images/val.png" 
         alt="Valentine's Day Illustration" 
-        class="mx-auto mb-6 w-32 h-32 object-cover rounded-full"
+        class="mx-auto mb-6 w-32 h-32 object-cover"
       />
 
       <h1 class="text-4xl text-indigo-600 mb-6">
@@ -30,73 +30,72 @@
         </button>
       </div>
 
-      <!-- Form Section -->
-      <transition name="fade">
-        <div v-if="formVisible" class="mt-6">
-          <form @submit.prevent="handleSubmit" class="space-y-4">
-            <!-- Name Input -->
-            <div class="space-y-2">
-              <input
-                v-model="formData.name"
-                type="text"
-                placeholder="Your Name"
-                required
-                class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
-                :class="{ 'border-red-500': errors.name }"
-              />
-              <p v-if="errors.name" class="text-red-500 text-sm text-left">
-                {{ errors.name }}
-              </p>
-            </div>
-
-            <!-- Email Input -->
-            <div class="space-y-2">
-              <input
-                v-model="formData.email"
-                type="email"
-                placeholder="Your Email"
-                required
-                class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
-                :class="{ 'border-red-500': errors.email }"
-              />
-              <p v-if="errors.email" class="text-red-500 text-sm text-left">
-                {{ errors.email }}
-              </p>
-            </div>
-
-            <!-- Form Buttons -->
-            <div class="flex gap-4 justify-center">
-              <button
-                type="submit"
-                :disabled="isSubmitting"
-                class="px-6 py-3 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition duration-300 transform hover:scale-105 disabled:opacity-50"
-              >
-                <span v-if="isSubmitting">Sending...</span>
-                <span v-else>Submit</span>
-              </button>
-              
-              <button
-                type="button"
-                @click="handleCancel"
-                class="px-6 py-3 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition duration-300"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </div>
-      </transition>
-
       <!-- Toast Notification -->
-      <transition name="fade">
-        <div 
-          v-if="notification.show"
-          class="fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white"
-          :class="notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'"
-        >
-          {{ notification.message }}
-        </div>
-      </transition>
+      <div 
+        v-if="notification.show"
+        class="fixed bottom-4 right-4 p-4 rounded-lg shadow-lg text-white"
+        :class="notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'"
+      >
+        {{ notification.message }}
+      </div>
+    </div>
+
+    <!-- Modal Popup for Form -->
+    <div v-if="formVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-semibold text-indigo-600 mb-4 text-center">Fill in your details</h2>
+        <form @submit.prevent="handleSubmit" class="space-y-4">
+          <!-- Name Input -->
+          <div class="space-y-2">
+            <input
+              v-model="formData.name"
+              type="text"
+              placeholder="Your Name"
+              required
+              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
+              :class="{ 'border-red-500': errors.name }"
+            />
+            <p v-if="errors.name" class="text-red-500 text-sm text-left">
+              {{ errors.name }}
+            </p>
+          </div>
+
+          <!-- Email Input -->
+          <div class="space-y-2">
+            <input
+              v-model="formData.email"
+              type="email"
+              placeholder="Your Email"
+              required
+              class="w-full px-4 py-2 rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white text-black"
+              :class="{ 'border-red-500': errors.email }"
+            />
+            <p v-if="errors.email" class="text-red-500 text-sm text-left">
+              {{ errors.email }}
+            </p>
+          </div>
+
+          <!-- Form Buttons -->
+          <div class="flex gap-4 justify-center">
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="px-6 py-3 bg-indigo-500 text-white rounded-lg shadow hover:bg-indigo-600 transition duration-300 transform hover:scale-105 disabled:opacity-50"
+            >
+              <span v-if="isSubmitting">Sending...</span>
+              <span v-else>Submit</span>
+            </button>
+            
+            <button
+              type="button"
+              @click="handleCancel"
+              class="px-6 py-3 bg-gray-500 text-white rounded-lg shadow hover:bg-gray-600 transition duration-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -165,15 +164,14 @@ const EMAIL_CONFIG = {
 onMounted(() => {
   if (EMAIL_CONFIG.USER_ID) {
     emailjs.init(EMAIL_CONFIG.USER_ID);
-  } else {
-    console.error("EmailJS User ID is missing.");
   }
 });
 
 // Handle YES button click
-const handleYesClick = () => {
-  console.log('YES button clicked');  
+const handleYesClick = async () => {
+  console.log('YES button clicked');
   formVisible.value = true;
+  await nextTick();  // Ensure DOM update is complete
 };
 
 // Handle form cancellation
@@ -252,7 +250,7 @@ const handleSubmit = async () => {
     }));
 
     showNotification('Thanks for your response! ❤️', 'success');
-    
+
     setTimeout(() => {
       router.push('/page7');
     }, 1500);
@@ -268,7 +266,7 @@ const handleSubmit = async () => {
 const moveNoButton = () => {
   const maxX = window.innerWidth - 100;
   const maxY = window.innerHeight - 100;
-  
+
   const randX = Math.floor(Math.random() * maxX);
   const randY = Math.floor(Math.random() * maxY);
 
