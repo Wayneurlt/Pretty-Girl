@@ -167,8 +167,14 @@ onMounted(() => {
 
 // Handle YES button click
 const handleYesClick = () => {
-  console.log('Yes clicked');
+  console.log('Yes clicked, current form visibility:', formVisible.value);
   formVisible.value = true;
+  console.log('Form visibility after change:', formVisible.value);
+  
+  // Force a DOM update
+  nextTick(() => {
+    console.log('DOM updated, form visibility:', formVisible.value);
+  });
 };
 
 // Handle form cancellation
