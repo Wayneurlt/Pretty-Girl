@@ -32,7 +32,7 @@
 
       <!-- Form Section -->
       <transition name="fade">
-        <div v-show="formVisible" class="mt-6">
+        <div v-if="formVisible" class="mt-6">
           <form @submit.prevent="handleSubmit" class="space-y-4">
             <!-- Name Input -->
             <div class="space-y-2">
@@ -172,6 +172,7 @@ onMounted(() => {
 
 // Handle YES button click
 const handleYesClick = () => {
+  console.log('YES button clicked');  
   formVisible.value = true;
 };
 
